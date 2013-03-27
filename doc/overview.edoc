@@ -1,0 +1,14 @@
+@author Fernando Benavides <elbrujohalcon@inaka.net>
+@copyright 2013, Inaka Labs
+@version 1.0
+@title et
+
+@doc
+
+== About ==
+Excercises for people who're trying to learn Erlang.
+
+== Description ==
+This application includes several excercises that are written as Common Test suites.
+Students should fork this repo (or create a branch in it), try running <pre>$ make test</pre> on their consoles and write the appropriate code to pass the tests.
+Excercise description and some tips are written as part of the test module documentation.

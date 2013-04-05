@@ -49,16 +49,16 @@ basic(_Config) ->
 	try lazy_server:wait(10) of
 		_ -> throw(it_should_have_failed)
 	catch
-		_ -> ok
+		_:_ -> ok
 	end,
 	ok = lazy_server:start(),
-	{Time, ok} = timer:tc(lazy_server, wait, 100),
+	{Time, ok} = timer:tc(lazy_server, wait, [100]),
 	true = Time > 100,
 	ok = lazy_server:stop(),
 	try lazy_server:wait(10) of
 		_ -> throw(it_should_have_failed)
 	catch
-		_ -> ok
+		_:_ -> ok
 	end,
 	ok.
 
@@ -71,7 +71,7 @@ concurrent(_Config) ->
 		fun(I) ->
 			spawn_link(
 				fun() ->
-					{Time, ok} = timer:tc(lazy_server, wait, I),
+					{Time, ok} = timer:tc(lazy_server, wait, [I]),
 					Self ! {Time, I}
 				end)
 		end, lists:seq(100, 1000, 100)),

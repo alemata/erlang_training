@@ -53,13 +53,14 @@ basic(_Config) ->
 	end,
 	ok = lazy_server:start(),
 	{Time, ok} = timer:tc(lazy_server, wait, [100]),
-	true = Time > 100,
+	true = Time > 100000,
 	ok = lazy_server:stop(),
 	try lazy_server:wait(10) of
 		_ -> throw(it_should_have_failed)
 	catch
 		_:_ -> ok
 	end,
+	io:format("7~n"),
 	ok.
 
 %% @doc Concurrency tests
@@ -81,11 +82,11 @@ concurrent(_Config) ->
 				lists:foreach(
 					fun(_) ->
 						receive
-							{T, I} when I > T -> throw({with, I, returned_too_early, T});
+							{T, I} when I > T*1000 -> throw({with, I, returned_too_early, T});
 							{_, _} -> ok
 						end
 					end, lists:seq(100, 1000, 100))
 			end),
 	%%NOTE: Since they all run in parallel, we should've compared the value against 1000, but we give the VM scheduler and what-not a 50% extra margin
-	true = FullTime < 1500,
+	true = FullTime < 1500000,
 	ok = lazy_server:stop().

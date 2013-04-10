@@ -11,8 +11,13 @@ start() ->
   
 -spec stop() -> ok.
 stop() ->
-  ?MODULE ! shutdown,
-  ok.
+  case whereis(?MODULE) of
+    undefined -> ok;
+    Pid -> 
+      exit(Pid, normal),
+      unregister(?MODULE),
+      ok
+  end.
 
 -spec wait(integer()) -> ok.
 wait(Ms) ->

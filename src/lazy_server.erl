@@ -1,7 +1,7 @@
 -module(lazy_server).
 -author('Flavio Granero <flavio@inaka.net>').
 
--export([start/0, wait/1, stop/0, init/0, delay/3]).
+-export([start/0, wait/1, stop/0, init/0]).
 
 % PUBLIC METHODS
 -spec start() -> ok.
@@ -14,7 +14,7 @@ stop() ->
   case whereis(?MODULE) of
     undefined -> ok;
     Pid -> 
-      exit(Pid, normal),
+      Pid ! shutdown,
       unregister(?MODULE),
       ok
   end.
@@ -40,7 +40,7 @@ wait_loop(Ref) ->
 init() ->
   receive 
     {Pid, MsgRef, {delay, Ms}} -> 
-      spawn(?MODULE, delay, [Pid, MsgRef, Ms]),
+      spawn(fun() -> delay(Pid, MsgRef, Ms) end),
       init();
     shutdown -> ok;
     Unknown ->

@@ -40,7 +40,8 @@
 -type config() :: [{atom(), term()}].
 -export([all/0]).
 -export([empty/1, invalid/1, drawn/1]).
--export([wins_vertically/1, wins_horizontally/1, wins_diagonally/1]).
+-export([wins_vertically/1, wins_horizontally/1, 
+         wins_right_diagonally/1, wins_left_diagonally/1]).
 
 %% @private
 -spec all() -> [atom()].
@@ -76,6 +77,7 @@ invalid(_Config) ->
 drawn(_Config) ->
   EmptyBoard = fiar:start(),
   FullBoard = almost_fill_board(EmptyBoard),
+  ct:comment("~p", [FullBoard]),
   drawn = fiar:play(3, FullBoard),
   ok.
 
@@ -96,13 +98,20 @@ wins_horizontally(_Config) ->
   ok.
 
 %% @doc when the player puts 4 chips in a diagonal row, wins
--spec wins_diagonally(config()) -> ok.
-wins_diagonally(_Config) ->
+-spec wins_right_diagonally(config()) -> ok.
+wins_right_diagonally(_Config) ->
   EmptyBoard = fiar:start(),
-  CheckMateBoard = drop_chips([4,4,4,4,6,3,3,3,7,2,2], EmptyBoard),
+  CheckMateBoard = drop_chips([4,4,4,4,6,3,3,3,2,2,7], EmptyBoard),
   won = fiar:play(1, CheckMateBoard),
   ok.
 
+%% @doc when the player puts 4 chips in a diagonal row, wins
+-spec wins_left_diagonally(config()) -> ok.
+wins_left_diagonally(_Config) ->
+  EmptyBoard = fiar:start(),
+  CheckMateBoard = drop_chips([4,4,4,4,2,5,5,5,6,6,1], EmptyBoard),
+  won = fiar:play(7, CheckMateBoard),
+  ok.
 
 %% @private
 %% @doc fills all columns in the board except #3
@@ -116,13 +125,13 @@ fill_column(Col, Board) -> drop_chips(7, Col, Board).
 %% @private
 drop_chips(0, _Col, Board) -> Board;
 drop_chips(N, Col, Board) ->
-  {next, NextBoard} = fiar:play(Col, Board),
+  {Col, Board, {next, NextBoard}} = {Col, Board, fiar:play(Col, Board)},
   drop_chips(N-1, Col, NextBoard).
 
 %% @private
 drop_chips([], Board) -> Board;
 drop_chips([Col|Rest], Board) ->
-  {next, NextBoard} = fiar:play(Col, Board),
+  {Col, Board, {next, NextBoard}} = {Col, Board, fiar:play(Col, Board)},
   drop_chips(Rest, NextBoard).
 
 

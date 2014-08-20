@@ -81,9 +81,6 @@ get_left_diag(Col, RowNum, Board) ->
 get_up_left_diag(Col, RowNum, Board, Acc) when Col =:= 1; RowNum =:= 7 ->
   Chip = get_chip(Col, RowNum, Board),
   [Chip | Acc];
-%get_up_left_diag(Col, 7, Board, Acc) -> 
-%  Chip = get_chip(Col, 7, Board),
-%  [Chip | Acc];
 get_up_left_diag(Col, RowNum, Board, Acc) ->
   Chip = get_chip(Col, RowNum, Board),
   Next = [Chip | Acc],

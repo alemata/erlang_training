@@ -78,12 +78,12 @@ get_left_diag(Col, RowNum, Board) ->
   DownLeftDiag = get_down_left_diag(Col, RowNum, Board, []),
   UpLeftDiag ++ tl(lists:reverse(DownLeftDiag)).
 
-get_up_left_diag(1, RowNum, Board, Acc) ->
-  Chip = get_chip(1, RowNum, Board),
+get_up_left_diag(Col, RowNum, Board, Acc) when Col =:= 1; RowNum =:= 7 ->
+  Chip = get_chip(Col, RowNum, Board),
   [Chip | Acc];
-get_up_left_diag(Col, 7, Board, Acc) -> 
-  Chip = get_chip(Col, 7, Board),
-  [Chip | Acc];
+%get_up_left_diag(Col, 7, Board, Acc) -> 
+%  Chip = get_chip(Col, 7, Board),
+%  [Chip | Acc];
 get_up_left_diag(Col, RowNum, Board, Acc) ->
   Chip = get_chip(Col, RowNum, Board),
   Next = [Chip | Acc],
@@ -105,22 +105,16 @@ get_right_diag(Col, RowNum, Board) ->
   UpRightDiag = get_up_right_diag(Col, RowNum, Board, []),
   DownRightDiag ++ tl(lists:reverse(UpRightDiag)).
 
-get_down_right_diag(1, RowNum, Board, Acc) ->
-  Chip = get_chip(1, RowNum, Board),
-  [Chip | Acc];
-get_down_right_diag(Col, 1, Board, Acc) ->
-  Chip = get_chip(Col, 1, Board),
+get_down_right_diag(Col, RowNum, Board, Acc) when Col =:= 1; RowNum =:= 1 ->
+  Chip = get_chip(Col, RowNum, Board),
   [Chip | Acc];
 get_down_right_diag(Col, RowNum, Board, Acc) ->
   Chip = get_chip(Col, RowNum, Board),
   Next = [Chip | Acc],
   get_down_right_diag(Col-1, RowNum-1, Board, Next).
 
-get_up_right_diag(7, RowNum, Board, Acc) ->
-  Chip = get_chip(7, RowNum, Board),
-  [Chip | Acc];
-get_up_right_diag(Col, 7, Board, Acc) ->
-  Chip = get_chip(Col, 7, Board),
+get_up_right_diag(Col, RowNum, Board, Acc) when Col =:= 7; RowNum =:= 7 ->
+  Chip = get_chip(Col, RowNum, Board),
   [Chip | Acc];
 get_up_right_diag(Col, RowNum, Board, Acc) ->
   Chip = get_chip(Col, RowNum, Board),
@@ -147,11 +141,8 @@ is_full(Board) ->
   Columns = tuple_to_list(Board),
   Fun = fun(Col) ->
          case length(Col) of
-               7 -> false;
-               _ -> true
+               7 -> true;
+               _ -> false
           end
   end,
-  case lists:filter(Fun, Columns) of
-    [] -> true;
-    _ -> false
-  end.
+  lists:all(Fun, Columns).

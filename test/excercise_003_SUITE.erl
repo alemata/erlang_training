@@ -77,7 +77,6 @@ invalid(_Config) ->
 drawn(_Config) ->
   EmptyBoard = fiar:start(),
   FullBoard = almost_fill_board(EmptyBoard),
-  ct:comment("~p", [FullBoard]),
   drawn = fiar:play(3, FullBoard),
   ok.
 
